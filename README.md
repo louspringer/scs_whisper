@@ -122,5 +122,14 @@ FROM TABLE(
 ## Demo Video
 https://github.com/michaelgorkow/scs_whisper/assets/28981844/9834dc43-932e-4d53-ade2-467f25f5da6d
 
+## Tools
+
+### `set_conda_env_var.sh`
+This script automates setting environment variables for a Conda environment. 
+
+**Example Usage**:
+```bash
+./scripts/set_conda_env_var.sh sccs
+
 
 

@@ -1,0 +1,11 @@
+name: sccs
+channels:
+  - defaults
+  - https://repo.anaconda.com/pkgs/main
+  - https://repo.anaconda.com/pkgs/r
+dependencies:
+  - jupyter
+  - notebook
+  - pandas
+  - python=3.11
+  - snowflake-snowpark-python
