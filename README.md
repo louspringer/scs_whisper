@@ -125,11 +125,29 @@ https://github.com/michaelgorkow/scs_whisper/assets/28981844/9834dc43-932e-4d53-
 ## Tools
 
 ### `set_conda_env_var.sh`
-This script automates setting environment variables for a Conda environment. 
+A utility script to manage environment variables in Conda environments. This script creates activation and deactivation hooks to automatically set and unset environment variables when you activate/deactivate your Conda environment.
 
-**Example Usage**:
+**Key Features:**
+- Environment-scoped variables
+- Automatic Git integration (if in a repository)
+- Idempotent variable setting
+- Safe cleanup on environment deactivation
+
+**Usage:**
 ```bash
-./scripts/set_conda_env_var.sh sccs
+./tools/set_conda_env_var.sh <environment_name> <variable_name> <variable_value>
+```
+
+**Example - Setting up Snowflake authentication:**
+```bash
+# Set the private key path
+./tools/set_conda_env_var.sh sccs SNOWFLAKE_PRIVATE_KEY_PATH "~/.ssh/snowflake.p8"
+
+# Set the authenticator type
+./tools/set_conda_env_var.sh sccs SNOWFLAKE_AUTHENTICATOR "SNOWFLAKE_JWT"
+```
+
+For detailed documentation, see [docs/tools/set_conda_env_var.md](docs/tools/set_conda_env_var.md).
 
 
 
