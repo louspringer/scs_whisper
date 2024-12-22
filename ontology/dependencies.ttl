@@ -1,0 +1,27 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix scs: <http://snowflake.com/containerservices#> .
+
+# Role Prerequisites
+scs:NonAccountAdminRole rdf:type scs:Prerequisite ;
+    scs:description "Role other than ACCOUNTADMIN is required" .
+
+# Resources
+scs:ImageRepository rdf:type scs:Resource ;
+    scs:requires scs:NonAccountAdminRole .
+
+scs:WhisperModelsStage rdf:type scs:Resource ;
+    scs:requires scs:NonAccountAdminRole .
+
+scs:AudioFilesStage rdf:type scs:Resource ;
+    scs:requires scs:NonAccountAdminRole .
+
+scs:ComputePool rdf:type scs:Resource ;
+    scs:requires scs:NonAccountAdminRole .
+
+# Application Dependencies
+scs:WhisperApplication rdf:type scs:Application ;
+    scs:requires scs:ImageRepository ;
+    scs:requires scs:WhisperModelsStage ;
+    scs:requires scs:AudioFilesStage ;
+    scs:requires scs:ComputePool ;
+    scs:requires scs:ExternalAccessIntegration . 

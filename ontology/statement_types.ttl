@@ -1,0 +1,16 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix scs: <http://snowflake.com/containerservices#> .
+
+# Statement Types
+scs:Statement rdf:type rdfs:Class .
+scs:SnowflakeSQL rdf:type scs:Statement .
+scs:DockerCommand rdf:type scs:Statement .
+scs:BashCommand rdf:type scs:Statement .
+scs:FileUpload rdf:type scs:Statement .
+
+# Statement Properties
+scs:requiresRole rdf:type rdf:Property .
+scs:requiresResource rdf:type rdf:Property .
+scs:creates rdf:type rdf:Property .
+scs:modifies rdf:type rdf:Property . 

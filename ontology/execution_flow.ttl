@@ -1,0 +1,38 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix scs: <http://snowflake.com/containerservices#> .
+
+# Execution Flow
+scs:CreateImageRepository rdf:type scs:Step ;
+    scs:order 1 ;
+    scs:requires scs:NonAccountAdminRole .
+
+scs:CreateStages rdf:type scs:Step ;
+    scs:order 2 ;
+    scs:requires scs:NonAccountAdminRole .
+
+scs:CreateComputePool rdf:type scs:Step ;
+    scs:order 3 ;
+    scs:requires scs:NonAccountAdminRole .
+
+scs:BuildAndPushContainer rdf:type scs:Step ;
+    scs:order 4 ;
+    scs:requires scs:CreateImageRepository .
+
+scs:UploadFiles rdf:type scs:Step ;
+    scs:order 5 ;
+    scs:requires scs:CreateStages .
+
+scs:CreateExternalAccess rdf:type scs:Step ;
+    scs:order 6 ;
+    scs:requires scs:NonAccountAdminRole .
+
+scs:CreateService rdf:type scs:Step ;
+    scs:order 7 ;
+    scs:requires scs:CreateComputePool ;
+    scs:requires scs:BuildAndPushContainer ;
+    scs:requires scs:UploadFiles ;
+    scs:requires scs:CreateExternalAccess .
+
+scs:CreateFunctions rdf:type scs:Step ;
+    scs:order 8 ;
+    scs:requires scs:CreateService . 

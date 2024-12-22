@@ -1,0 +1,107 @@
+@startuml Whisper Application Architecture
+
+' Styling
+skinparam componentStyle uml2
+skinparam packageStyle rectangle
+skinparam backgroundColor white
+
+' Class definitions
+abstract class Statement {
+  +requiresRole: Role
+  +requiresResource: Resource[]
+  +creates: Resource[]
+  +modifies: Resource[]
+}
+
+class SnowflakeSQL extends Statement
+class DockerCommand extends Statement
+class BashCommand extends Statement
+class FileUpload extends Statement
+
+class Role {
+  +name: String
+  +isNonAccountAdmin: Boolean
+}
+
+class Resource {
+  +name: String
+  +type: ResourceType
+  +owner: Role
+}
+
+class Application {
+  +name: String
+  +status: String
+  +version: String
+}
+
+enum ResourceType {
+  IMAGE_REPOSITORY
+  STAGE
+  COMPUTE_POOL
+  SERVICE
+  FUNCTION
+  NETWORK_RULE
+}
+
+' Steps in execution flow
+class Step {
+  +order: Integer
+  +name: String
+  +requires: Step[]
+  +produces: Resource[]
+}
+
+' Specific Resources
+class ImageRepository extends Resource
+class Stage extends Resource
+class ComputePool extends Resource
+class Service extends Resource
+class Function extends Resource
+class NetworkRule extends Resource
+
+' Dependencies
+Application "1" *-- "n" Resource : contains
+Resource "n" -- "1" Role : owned by
+Statement "n" -- "1" Role : requires
+Step "1" -- "n" Statement : executes
+Step "n" -- "n" Resource : produces
+
+package "Execution Flow" {
+  class CreateImageRepository extends Step
+  class CreateStages extends Step
+  class CreateComputePool extends Step
+  class BuildAndPushContainer extends Step
+  class UploadFiles extends Step
+  class CreateExternalAccess extends Step
+  class CreateService extends Step
+  class CreateFunctions extends Step
+}
+
+' Execution Flow Dependencies
+CreateImageRepository -down-> CreateStages
+CreateStages -down-> CreateComputePool
+CreateComputePool -down-> BuildAndPushContainer
+BuildAndPushContainer -down-> UploadFiles
+UploadFiles -down-> CreateExternalAccess
+CreateExternalAccess -down-> CreateService
+CreateService -down-> CreateFunctions
+
+' Resource Dependencies
+Service --> ComputePool : runs on
+Service --> ImageRepository : uses image from
+Service --> NetworkRule : uses
+Function --> Service : deployed to
+Stage --> Role : accessed by
+
+note right of Role
+  Non-ACCOUNTADMIN role
+  required for all operations
+end note
+
+note right of Application
+  Whisper Application
+  Transcription Service
+end note
+
+@enduml 

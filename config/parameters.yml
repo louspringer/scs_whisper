@@ -1,0 +1,45 @@
+snowflake:
+  organization: ${ORGNAME}
+  account: ${ACCTNAME}
+  database: ${DATABASE}
+  schema: ${SCHEMA}
+  
+docker:
+  registry: "${ORGNAME}-${ACCTNAME}.registry.snowflakecomputing.com"
+  repository: "${DATABASE}/${SCHEMA}/TEST_IMAGE_REPOSITORY"
+  image: "whisper_app"
+  tag: "latest"
+  platform: "linux/amd64"
+
+compute:
+  pool_name: "${COMPUTE_POOL_NAME}"
+  instance_family: "${INSTANCE_FAMILY}"
+  min_nodes: ${MIN_NODES}
+  max_nodes: ${MAX_NODES}
+
+stages:
+  models: "${MODELS_STAGE_NAME}"
+  audio: "${AUDIO_STAGE_NAME}"
+  app: "${APP_STAGE_NAME}"
+
+network:
+  rule_name: "${NETWORK_RULE_NAME}"
+  integration_name: "${INTEGRATION_NAME}"
+  egress_ports:
+    - "0.0.0.0:443"
+    - "0.0.0.0:80"
+
+service:
+  name: "${SERVICE_NAME}"
+  min_instances: ${SERVICE_MIN_INSTANCES}
+  max_instances: ${SERVICE_MAX_INSTANCES}
+  functions:
+    detect_language:
+      name: "DETECT_LANGUAGE"
+      endpoint: "/detect-language"
+    transcribe:
+      name: "TRANSCRIBE"
+      endpoint: "/asr"
+  logging:
+    proxy_level: 0
+    container: "proxy"
