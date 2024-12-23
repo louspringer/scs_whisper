@@ -5,7 +5,7 @@ snowflake:
   schema: ${SCHEMA}
   
 docker:
-  registry: "${ORGNAME}-${ACCTNAME}.registry.snowflakecomputing.com"
+  registry: "${ORGNAME}-${SELECT SYSTEM$GET_SNOWFLAKE_PLATFORM_INFO()['platformInfo']['accountGuid']}.registry.snowflakecomputing.com"
   repository: "${DATABASE}/${SCHEMA}/TEST_IMAGE_REPOSITORY"
   image: "whisper_app"
   tag: "latest"

@@ -8,7 +8,14 @@ Afterwards you can easily transcribe any audio file into text and detect its lan
 * Use a role <u>other than ACCOUNTADMIN</u> as described here: [Docs](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/additional-considerations-services-jobs#network-egress)
 
 ## Setup Instructions
-### 1. Create image repository, stages and compute pool 
+### 1. Get your Snowflake account GUID
+You can obtain your account GUID by running:
+```sql
+SELECT CURRENT_ACCOUNT() as ACCOUNT_NAME, 
+       SYSTEM$GET_SNOWFLAKE_PLATFORM_INFO()['platformInfo']['accountGuid'] as ACCOUNT_GUID;
+```
+
+### 2. Create image repository, stages and compute pool 
 ```sql
 -- create image repository
 CREATE OR REPLACE IMAGE REPOSITORY ${DATABASE}.${SCHEMA}.TEST_IMAGE_REPOSITORY;
@@ -24,24 +31,24 @@ CREATE COMPUTE POOL ${COMPUTE_POOL_NAME}
   INSTANCE_FAMILY = ${INSTANCE_FAMILY};
 ```
 
-### 2. Clone this repository
+### 3. Clone this repository
 ```bash
 git clone https://github.com/michaelgorkow/scs_whisper.git
 ```
 
-### 3. Build & Upload the container
+### 4. Build & Upload the container
 ```cmd
 cd scs_whisper
 docker build --platform linux/amd64 -t ${docker.registry}/${docker.repository}/${docker.image}:${docker.tag} .
 docker push ${docker.registry}/${docker.repository}/${docker.image}:${docker.tag}
 ```
 
-### 4. Upload files to stages  
+### 5. Upload files to stages  
 Use your favourite way of uploading files and upload 
 * the `spec.yml` to stage `WHISPER_APP`
 * the audio files to stage `AUDIO_FILES`
 
-### 5. Create External Access Integration
+### 6. Create External Access Integration
 ```sql
 -- Create External Access Integration
 CREATE OR REPLACE NETWORK RULE ${NETWORK_RULE_NAME}
@@ -54,7 +61,7 @@ CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION ${INTEGRATION_NAME}
     ENABLED = true;
 ```
 
-### 6. Create the Whisper Service
+### 7. Create the Whisper Service
 ```sql
 -- Create Service
 CREATE SERVICE ${SERVICE_NAME}
@@ -69,7 +76,7 @@ CREATE SERVICE ${SERVICE_NAME}
 SELECT SYSTEM$GET_SERVICE_STATUS('${SERVICE_NAME}');
 ```
 
-### 7. Create the service functions for language detection and transcription
+### 8. Create the service functions for language detection and transcription
 ```sql
 -- Function to detect language from audio file
 CREATE OR REPLACE FUNCTION DETECT_LANGUAGE(AUDIO_FILE TEXT, ENCODE BOOLEAN)
@@ -86,7 +93,7 @@ ENDPOINT=API
 AS '/asr';
 ```
 
-### 8. Call the service functions using files from a Directory Table
+### 9. Call the service functions using files from a Directory Table
 ```sql
 -- Run Whisper on a files in a stage
 SELECT RELATIVE_PATH, 
@@ -102,7 +109,7 @@ SELECT RELATIVE_PATH,
 FROM DIRECTORY('@${DATABASE}.${SCHEMA}.${AUDIO_STAGE_NAME}');
 ```
 
-### 9. Clean your environment
+### 10. Clean your environment
 ```sql
 -- Clean Up
 DROP SERVICE ${SERVICE_NAME};
