@@ -3,6 +3,10 @@ snowflake:
   account: ${ACCTNAME}
   database: ${DATABASE}
   schema: ${SCHEMA}
+  warehouse: ${WAREHOUSE_NAME}
+  role:
+    name: "${SPCS_ROLE_NAME}"
+    user: "${SNOWFLAKE_USER}"
   
 docker:
   registry: "${ORGNAME}-${SELECT SYSTEM$GET_SNOWFLAKE_PLATFORM_INFO()['platformInfo']['accountGuid']}.registry.snowflakecomputing.com"

@@ -1,22 +1,42 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix scs: <http://snowflake.com/containerservices#> .
 
+# Role Types and Privileges
+scs:RolePrivilege rdf:type rdfs:Class .
+scs:WarehouseUsage rdf:type scs:RolePrivilege .
+scs:DatabaseUsage rdf:type scs:RolePrivilege .
+scs:SchemaUsage rdf:type scs:RolePrivilege .
+scs:TableRead rdf:type scs:RolePrivilege .
+scs:TableWrite rdf:type scs:RolePrivilege .
+
 # Role Prerequisites
-scs:NonAccountAdminRole rdf:type scs:Prerequisite ;
-    scs:description "Role other than ACCOUNTADMIN is required" .
+scs:SPCSServiceRole rdf:type scs:Role ;
+    scs:description "Dedicated SPCS service role is required" ;
+    scs:name "${SPCS_ROLE_NAME}" ;
+    scs:requires (
+        scs:WarehouseUsage
+        scs:DatabaseUsage
+        scs:SchemaUsage
+        scs:TableRead
+        scs:TableWrite
+    ) .
 
 # Resources
 scs:ImageRepository rdf:type scs:Resource ;
-    scs:requires scs:NonAccountAdminRole .
+    scs:requires scs:SPCSServiceRole ;
+    scs:requiresPrivilege scs:SchemaUsage .
 
 scs:WhisperModelsStage rdf:type scs:Resource ;
-    scs:requires scs:NonAccountAdminRole .
+    scs:requires scs:SPCSServiceRole ;
+    scs:requiresPrivilege scs:SchemaUsage .
 
 scs:AudioFilesStage rdf:type scs:Resource ;
-    scs:requires scs:NonAccountAdminRole .
+    scs:requires scs:SPCSServiceRole ;
+    scs:requiresPrivilege scs:SchemaUsage .
 
 scs:ComputePool rdf:type scs:Resource ;
-    scs:requires scs:NonAccountAdminRole .
+    scs:requires scs:SPCSServiceRole ;
+    scs:requiresPrivilege scs:WarehouseUsage .
 
 # Application Dependencies
 scs:WhisperApplication rdf:type scs:Application ;

@@ -4,6 +4,13 @@
 
 # Statement Types
 scs:Statement rdf:type rdfs:Class .
+scs:RoleStatement rdf:type scs:Statement ;
+    scs:subTypes (
+        scs:CreateRoleStatement
+        scs:GrantPrivilegeStatement
+        scs:UseRoleStatement
+    ) .
+
 scs:SnowflakeSQL rdf:type scs:Statement .
 scs:DockerCommand rdf:type scs:Statement .
 scs:BashCommand rdf:type scs:Statement .
@@ -13,4 +20,5 @@ scs:FileUpload rdf:type scs:Statement .
 scs:requiresRole rdf:type rdf:Property .
 scs:requiresResource rdf:type rdf:Property .
 scs:creates rdf:type rdf:Property .
-scs:modifies rdf:type rdf:Property . 
+scs:modifies rdf:type rdf:Property .
+scs:grants rdf:type rdf:Property . 

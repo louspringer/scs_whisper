@@ -8,15 +8,33 @@ Afterwards you can easily transcribe any audio file into text and detect its lan
 * Use a role <u>other than ACCOUNTADMIN</u> as described here: [Docs](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/additional-considerations-services-jobs#network-egress)
 
 ## Setup Instructions
-### 1. Get your Snowflake account GUID
-You can obtain your account GUID by running:
+### 1. Create and configure SPCS service role
+First, create a dedicated role for Snowpark Container Services:
 ```sql
-SELECT CURRENT_ACCOUNT() as ACCOUNT_NAME, 
-       SYSTEM$GET_SNOWFLAKE_PLATFORM_INFO()['platformInfo']['accountGuid'] as ACCOUNT_GUID;
+-- Create and configure SPCS role
+CREATE ROLE IF NOT EXISTS ${SPCS_ROLE_NAME};
+
+-- Grant necessary privileges
+GRANT USAGE ON WAREHOUSE ${WAREHOUSE_NAME} TO ROLE ${SPCS_ROLE_NAME};
+GRANT USAGE ON DATABASE ${DATABASE} TO ROLE ${SPCS_ROLE_NAME};
+GRANT USAGE ON SCHEMA ${DATABASE}.${SCHEMA} TO ROLE ${SPCS_ROLE_NAME};
+
+-- Grant table access privileges
+GRANT SELECT ON ALL TABLES IN SCHEMA ${DATABASE}.${SCHEMA} TO ROLE ${SPCS_ROLE_NAME};
+GRANT SELECT ON FUTURE TABLES IN SCHEMA ${DATABASE}.${SCHEMA} TO ROLE ${SPCS_ROLE_NAME};
+GRANT INSERT, UPDATE ON ALL TABLES IN SCHEMA ${DATABASE}.${SCHEMA} TO ROLE ${SPCS_ROLE_NAME};
+GRANT INSERT, UPDATE ON FUTURE TABLES IN SCHEMA ${DATABASE}.${SCHEMA} TO ROLE ${SPCS_ROLE_NAME};
+
+-- Assign role to user
+GRANT ROLE ${SPCS_ROLE_NAME} TO USER ${SNOWFLAKE_USER};
 ```
 
-### 2. Create image repository, stages and compute pool 
+### 2. Create image repository, stages and compute pool
+Use the newly created role for the following operations:
 ```sql
+-- Use SPCS role
+USE ROLE ${SPCS_ROLE_NAME};
+
 -- create image repository
 CREATE OR REPLACE IMAGE REPOSITORY ${DATABASE}.${SCHEMA}.TEST_IMAGE_REPOSITORY;
 
